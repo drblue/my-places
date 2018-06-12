@@ -61,10 +61,7 @@ class My_Places_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
-		/**
-		 * @todo: this should be fetched from the plugins settings page
-		 */
-		$this->google_maps_api_key = "AIzaSyBe-GZldOyNH28OsjkstfHgJRimyTswNsU";
+		$this->google_maps_api_key = get_option('my-places_google_maps_api_key');
 
 	}
 

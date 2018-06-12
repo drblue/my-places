@@ -100,4 +100,60 @@ class My_Places_Admin {
 
 	}
 
+	public function add_options_page() {
+		add_submenu_page(
+			'tools.php',						// menu slug to add submenu to
+			'My Places Options',				// option page title
+			'My Places',						// menu title
+			'manage_options',					// capability required for this menu option to be accessible
+			'my-places',						// slug for our options page
+			['My_Places_Admin', 'options_page']	// function that outputs our options
+		);
+	}
+
+	public function options_page() {
+		// check user capabilities
+		if (!current_user_can('manage_options')) {
+			return;
+		}
+		?>
+			<div class="wrap">
+				<h1><?= esc_html(get_admin_page_title()); ?></h1>
+
+				<form action="options.php" method="post">
+					<?php
+					// output security fields for the registered setting "my-places_options"
+					settings_fields('my-places_options');
+
+					// output setting sections and their fields
+					// (sections are registered for "my-places", each field is registered to a specific section)
+					do_settings_sections('my-places');
+
+					// output save settings button
+					submit_button('Save Settings');
+					?>
+				</form>
+			</div>
+		<?php
+	}
+
+	public function admin_init() {
+		add_settings_section("my-places_maps_settings", "Google Maps Settings", null, "my-places");
+
+		add_settings_field(
+			"my-places_google_maps_api_key",					// option slug
+			"Google Maps API Key",								// label
+			['My_Places_Admin', 'option_google_maps_api_key'],	// method to call for displaying option field
+			"my-places",										// slug to options page
+			"my-places_maps_settings"							// settings section slug
+		);
+		register_setting("my-places_options", "my-places_google_maps_api_key");
+	}
+
+	public function option_google_maps_api_key() {
+		?>
+			<input type="text" name="my-places_google_maps_api_key" id="my-places_google_maps_api_key" value="<?php echo get_option('my-places_google_maps_api_key'); ?>" />
+		<?php
+	}
+
 }
