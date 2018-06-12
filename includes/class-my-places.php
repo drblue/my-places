@@ -78,6 +78,7 @@ class My_Places {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		$this->define_shortcodes();
 
 	}
 
@@ -157,6 +158,10 @@ class My_Places {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
+		// add options page for this plugin
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_options_page' );
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'admin_init' );
+
 	}
 
 	/**
@@ -173,6 +178,51 @@ class My_Places {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
+	}
+
+	/**
+	 * Register all of the shortcodes related to the public-facing functionality
+	 * of the plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function define_shortcodes() {
+
+		/*
+		$plugin_public = new My_Places_Public( $this->get_plugin_name(), $this->get_version() );
+
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		*/
+
+		/**
+		 * @todo move this logic to a separate class
+		 */
+		if (!shortcode_exists('my_places_map')) {
+			add_shortcode('my_places_map', ['My_Places', 'shortcode_my_places_map']);
+		}
+
+		/**
+		 * @todo move this logic to a separate class
+		 */
+		if (!shortcode_exists('my_places_form')) {
+			add_shortcode('my_places_form', ['My_Places', 'shortcode_my_places_form']);
+		}
+	}
+
+	/**
+	 * @todo move this logic to a separate class
+	 */
+	public static function shortcode_my_places_map() {
+		return '<div id="my-places-map"><i>Loading map...</i></div>';
+	}
+
+	/**
+	 * @todo move this logic to a separate class
+	 */
+	public static function shortcode_my_places_form() {
+		return "I am very friendly form! Please fill me out! Me lonely.";
 	}
 
 	/**
