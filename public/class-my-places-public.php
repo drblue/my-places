@@ -41,6 +41,15 @@ class My_Places_Public {
 	private $version;
 
 	/**
+	 * The Google Maps API key for this plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string    $google_maps_api_key    The Google Maps API key for this plugin.
+	 */
+	private $google_maps_api_key;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
@@ -51,6 +60,11 @@ class My_Places_Public {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+
+		/**
+		 * @todo: this should be fetched from the plugins settings page
+		 */
+		$this->google_maps_api_key = "AIzaSyBe-GZldOyNH28OsjkstfHgJRimyTswNsU";
 
 	}
 
@@ -96,7 +110,10 @@ class My_Places_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/my-places-public.js', array( 'jquery' ), $this->version, false );
+		// enqueue google maps javascript api library
+		wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . $this->google_maps_api_key, [], true);
+
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/my-places-public.js', array( 'jquery', 'google-maps' ), $this->version, true );
 
 	}
 
