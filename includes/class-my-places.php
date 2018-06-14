@@ -246,7 +246,7 @@ class My_Places {
 
 				$content = "";
 				if (get_the_title()) {
-					$content .= "<h6>" . get_the_title() . "</h6>";
+					$content .= "<p><b>" . get_the_title() . "</b></p>";
 				}
 				if (get_field('address') && get_field('city')) {
 					$content .= "<p>" . get_field('address') . ", " . get_field('city') . "</p>";
