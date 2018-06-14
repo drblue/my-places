@@ -30,18 +30,7 @@
 	 */
 
 	var mymap,
-		mymarkers = [
-			{
-				latitude: 55.7050242,
-				longitude: 13.1942046,
-				content: '<h4>First marker</h4>Very improved info window! yey! Much <b>HTML!</b>'
-			},
-			{
-				latitude: 55.7150242,
-				longitude: 13.1742046,
-				content: 'This is second marker improved info window! very wow!'
-			},
-		];
+		mymarkers;
 
 	function initMap() {
 		mymap = new google.maps.Map(document.getElementById('my-places-map'), {
@@ -56,10 +45,41 @@
 	}
 
 	function addMapMarkers() {
+		// send request to WordPress and fetch available places
+		$.post(
+			my_places_obj.ajax_url,
+			{
+				action: 'get_places',
+			}
+		)
+		.done(function(response) {
+			console.log("Great success get_places!", response);
+			if (!response.success) {
+				alert("Sorry, failed to get map markers.");
+				console.error(error);
+
+				return;
+			}
+
+			if (response.data && response.data.length > 0) {
+				// loop over mymarkers array and add a marker for each object in the array
+				$.each(response.data, function (index, marker) {
+					addMapMarker(marker.latitude, marker.longitude, marker.content);
+				});
+			}
+
+		})
+		.fail(function(error) {
+			alert("Sorry, failed to get map markers.");
+			console.error(error);
+		});
+
+		/*
 		// loop over mymarkers array and add a marker for each object in the array
 		$.each(mymarkers, function(index, marker){
 			addMapMarker(marker.latitude, marker.longitude, marker.content);
 		});
+		*/
 	}
 
 	function addMapMarker(latitude, longitude, infoWindowContent) {
