@@ -29,7 +29,19 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
-	var mymap;
+	var mymap,
+		mymarkers = [
+			{
+				latitude: 55.7050242,
+				longitude: 13.1942046,
+				content: '<h4>First marker</h4>Very improved info window! yey! Much <b>HTML!</b>'
+			},
+			{
+				latitude: 55.7150242,
+				longitude: 13.1742046,
+				content: 'This is second marker improved info window! very wow!'
+			},
+		];
 
 	function initMap() {
 		mymap = new google.maps.Map(document.getElementById('my-places-map'), {
@@ -39,7 +51,38 @@
 			},
 			zoom: Number(my_places_obj.google_maps_zoom),
 		});
+
+		addMapMarkers();
 	}
+
+	function addMapMarkers() {
+		// loop over mymarkers array and add a marker for each object in the array
+		$.each(mymarkers, function(index, marker){
+			addMapMarker(marker.latitude, marker.longitude, marker.content);
+		});
+	}
+
+	function addMapMarker(latitude, longitude, infoWindowContent) {
+		var marker = new google.maps.Marker({
+			position: {
+				lat: latitude,
+				lng: longitude,
+			},
+			map: mymap,
+		});
+
+		// add InfoWindow to first marker
+		var infoWindow = new google.maps.InfoWindow({
+			content: infoWindowContent,
+		});
+
+		// add first infoWindow to first marker
+		marker.addListener('click', function () {
+			infoWindow.open(mymap, marker);
+		});
+	}
+
+	// initialize map
 	initMap();
 
 })( jQuery );
