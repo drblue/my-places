@@ -162,6 +162,8 @@ class My_Places {
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_options_page' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'admin_init' );
 
+		// add ajax action for getting places
+		$this->loader->add_action( 'wp_ajax_get_places', $this, 'ajax_get_places' );
 	}
 
 	/**
@@ -178,6 +180,8 @@ class My_Places {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
+		// add ajax action for getting places
+		$this->loader->add_action( 'wp_ajax_nopriv_get_places', $this, 'ajax_get_places' );
 	}
 
 	/**
@@ -223,6 +227,26 @@ class My_Places {
 	 */
 	public static function shortcode_my_places_form() {
 		return "I am very friendly form! Please fill me out! Me lonely.";
+	}
+
+	/**
+	 * @todo move this logic to a separate class
+	 */
+	public static function ajax_get_places() {
+		$data = [
+			[
+				'latitude' => 55.7050242,
+				'longitude' => 13.1942046,
+				'content' => '<h4>First marker</h4>Very improved info window! yey! Much <b>HTML!</b>',
+			],
+			[
+				'latitude' => 55.7150242,
+				'longitude' => 13.1742046,
+				'content' => '<h4>Second marker</h4>Very much improved info window! yey! Such <b>HTML!</b>',
+			],
+		];
+
+		wp_send_json_success($data);
 	}
 
 	/**
