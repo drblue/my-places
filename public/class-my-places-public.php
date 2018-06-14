@@ -112,6 +112,12 @@ class My_Places_Public {
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/my-places-public.js', array( 'jquery', 'google-maps' ), $this->version, true );
 
+		wp_localize_script($this->plugin_name, 'my_places_obj', [
+			'google_maps_latitude' => get_option('my-places_google_maps_latitude'),
+			'google_maps_longitude' => get_option('my-places_google_maps_longitude'),
+			'google_maps_zoom' => get_option('my-places_google_maps_zoom'),
+		]);
+
 	}
 
 }

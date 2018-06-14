@@ -140,6 +140,7 @@ class My_Places_Admin {
 	public function admin_init() {
 		add_settings_section("my-places_maps_settings", "Google Maps Settings", null, "my-places");
 
+		// Google Maps API Key
 		add_settings_field(
 			"my-places_google_maps_api_key",					// option slug
 			"Google Maps API Key",								// label
@@ -148,11 +149,59 @@ class My_Places_Admin {
 			"my-places_maps_settings"							// settings section slug
 		);
 		register_setting("my-places_options", "my-places_google_maps_api_key");
+
+		// Google Maps Default Latitude
+		add_settings_field(
+			"my-places_google_maps_latitude",					// option slug
+			"Google Maps Default Latitude",						// label
+			['My_Places_Admin', 'option_google_maps_latitude'],	// method to call for displaying option field
+			"my-places",										// slug to options page
+			"my-places_maps_settings"							// settings section slug
+		);
+		register_setting("my-places_options", "my-places_google_maps_latitude");
+
+		// Google Maps Default Longitude
+		add_settings_field(
+			"my-places_google_maps_longitude",					// option slug
+			"Google Maps Default Longitude",						// label
+			['My_Places_Admin', 'option_google_maps_longitude'],	// method to call for displaying option field
+			"my-places",										// slug to options page
+			"my-places_maps_settings"							// settings section slug
+		);
+		register_setting("my-places_options", "my-places_google_maps_longitude");
+
+		// Google Maps Default Zoom Level
+		add_settings_field(
+			"my-places_google_maps_zoom",					// option slug
+			"Google Maps Default Zoom Level",						// label
+			['My_Places_Admin', 'option_google_maps_zoom'],	// method to call for displaying option field
+			"my-places",										// slug to options page
+			"my-places_maps_settings"							// settings section slug
+		);
+		register_setting("my-places_options", "my-places_google_maps_zoom");
 	}
 
 	public function option_google_maps_api_key() {
 		?>
 			<input type="text" name="my-places_google_maps_api_key" id="my-places_google_maps_api_key" value="<?php echo get_option('my-places_google_maps_api_key'); ?>" />
+		<?php
+	}
+
+	public function option_google_maps_latitude() {
+		?>
+			<input type="number" step="0.0000001" name="my-places_google_maps_latitude" id="my-places_google_maps_latitude" value="<?php echo get_option('my-places_google_maps_latitude'); ?>" />
+		<?php
+	}
+
+	public function option_google_maps_longitude() {
+		?>
+			<input type="number" step="0.0000001" name="my-places_google_maps_longitude" id="my-places_google_maps_longitude" value="<?php echo get_option('my-places_google_maps_longitude'); ?>" />
+		<?php
+	}
+
+	public function option_google_maps_zoom() {
+		?>
+			<input type="number" name="my-places_google_maps_zoom" id="my-places_google_maps_zoom" value="<?php echo get_option('my-places_google_maps_zoom'); ?>" />
 		<?php
 	}
 

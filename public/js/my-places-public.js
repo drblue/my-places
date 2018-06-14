@@ -29,12 +29,15 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
-	var map;
+	var mymap;
 
 	function initMap() {
-		map = new google.maps.Map(document.getElementById('my-places-map'), {
-			center: { lat: -34.397, lng: 150.644 },
-			zoom: 8
+		mymap = new google.maps.Map(document.getElementById('my-places-map'), {
+			center: {
+				lat: Number(my_places_obj.google_maps_latitude),
+				lng: Number(my_places_obj.google_maps_longitude),
+			},
+			zoom: Number(my_places_obj.google_maps_zoom),
 		});
 	}
 	initMap();
