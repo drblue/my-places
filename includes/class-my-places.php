@@ -233,20 +233,35 @@ class My_Places {
 	 * @todo move this logic to a separate class
 	 */
 	public static function ajax_get_places() {
-		$data = [
-			[
-				'latitude' => 55.7050242,
-				'longitude' => 13.1942046,
-				'content' => '<h4>First marker</h4>Very improved info window! yey! Much <b>HTML!</b>',
-			],
-			[
-				'latitude' => 55.7150242,
-				'longitude' => 13.1742046,
-				'content' => '<h4>Second marker</h4>Very much improved info window! yey! Such <b>HTML!</b>',
-			],
-		];
+		$places = new WP_Query([
+			'post_type' => 'my_place',
+			'post_status' => 'publish',
+			'posts_per_page' => -1,
+		]);
 
-		wp_send_json_success($data);
+		if ($places->have_posts()) {
+			$data = [];
+			while ($places->have_posts()) {
+				$places->the_post();
+
+				$content = "";
+				if (get_the_title()) {
+					$content .= "<h6>" . get_the_title() . "</h6>";
+				}
+				if (get_field('address') && get_field('city')) {
+					$content .= "<p>" . get_field('address') . ", " . get_field('city') . "</p>";
+				}
+
+				array_push($data, [
+					'latitude' => floatval(get_field('lat')),
+					'longitude' => floatval(get_field('lng')),
+					'content' => $content,
+				]);
+			}
+			wp_send_json_success($data);
+		} else {
+			wp_send_json_error(['message' => 'No posts found.']);
+		}
 	}
 
 	/**
