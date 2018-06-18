@@ -260,7 +260,7 @@ class My_Places {
 			}
 			wp_send_json_success($data);
 		} else {
-			wp_send_json_error(['message' => 'No posts found.']);
+			wp_send_json_error(['message' => 'No places matching your selected criteria found.']);
 		}
 	}
 

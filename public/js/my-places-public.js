@@ -55,14 +55,14 @@
 		.done(function(response) {
 			console.log("Great success get_places!", response);
 			if (!response.success) {
-				alert("Sorry, failed to get map markers.");
+				alert("Sorry, failed to get map markers. The error message was: " + response.data.message);
 				console.error(error);
 
 				return;
 			}
 
 			if (response.data && response.data.length > 0) {
-				// loop over mymarkers array and add a marker for each object in the array
+				// loop over response.data array and add a marker for each object in the array
 				$.each(response.data, function (index, marker) {
 					addMapMarker(marker.latitude, marker.longitude, marker.content);
 				});
@@ -73,13 +73,6 @@
 			alert("Sorry, failed to get map markers.");
 			console.error(error);
 		});
-
-		/*
-		// loop over mymarkers array and add a marker for each object in the array
-		$.each(mymarkers, function(index, marker){
-			addMapMarker(marker.latitude, marker.longitude, marker.content);
-		});
-		*/
 	}
 
 	function addMapMarker(latitude, longitude, infoWindowContent) {
