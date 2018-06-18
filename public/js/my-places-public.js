@@ -30,7 +30,7 @@
 	 */
 
 	var mymap,
-		mymarkers;
+		mymarkers = [];
 
 	function initMap() {
 		mymap = new google.maps.Map(document.getElementById('my-places-map'), {
@@ -44,7 +44,14 @@
 		addMapMarkers();
 	}
 
-	function addMapMarkers() {
+	function addMapMarkers(placetypes = false) {
+		// check if we have any markers already on the map
+		if (mymarkers.length > 0) {
+			$.each(mymarkers, function(index, mapmarker) {
+				mapmarker.marker.setMap(null);		// remove marker from map
+				mapmarker.marker = null;			// remove marker from memory
+			});
+		}
 		mymarkers = [];
 
 		// send request to WordPress and fetch available places
@@ -52,6 +59,7 @@
 			my_places_obj.ajax_url,
 			{
 				action: 'get_places',
+				placetypes: placetypes,
 			}
 		)
 		.done(function(response) {
@@ -114,6 +122,20 @@
 			mymarker.infoWindow.close();
 		});
 	}
+
+	// add click handler to filter button
+	$('#my-placetypes input').on('click', function(e) {
+		var placetypes = [];
+		// get all checkboxes for placetypes
+		var inputs = $('#my-placetypes input');
+		$.each(inputs, function(index, input) {
+			if ($(input).prop('checked')) {
+				placetypes.push($(input).data('id'));
+			}
+		});
+		console.log("selected placetypes", placetypes);
+		addMapMarkers(placetypes);
+	});
 
 	// initialize map
 	initMap();

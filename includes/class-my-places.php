@@ -219,7 +219,24 @@ class My_Places {
 	 * @todo move this logic to a separate class
 	 */
 	public static function shortcode_my_places_map() {
-		return '<div id="my-places-map"><i>Loading map...</i></div>';
+		$output = "";
+		$output .= '<div id="my-places-map-wrapper">';
+		$output .= '  <div id="my-placetypes">';
+		$output .= '    <ul>';
+
+		// loop over all terms in taxonomy my_placetype and echo out a checkbox for each term
+		$placetypes = get_terms(['taxonomy' => 'my_placetype']);
+		foreach($placetypes as $placetype) {
+			$output .= '<li><input type="checkbox" id="placetype_' . $placetype->term_id . '" data-id="' . $placetype->term_id . '" checked="checked"> <label for="placetype_' . $placetype->term_id . '">' . $placetype->name . '</label></li>';
+		}
+
+		$output .= '    </ul>';
+		//$output .= '    <button id="my-placetypes-filter">Filter</button>';
+		$output .= '  </div>';
+		$output .= '  <div id="my-places-map"><i>Loading map...</i></div>';
+		$output .= '</>';
+
+		return $output;
 	}
 
 	/**
@@ -233,11 +250,25 @@ class My_Places {
 	 * @todo move this logic to a separate class
 	 */
 	public static function ajax_get_places() {
-		$places = new WP_Query([
+		$placetypes = $_POST['placetypes'];
+
+		$query_parameters = [
 			'post_type' => 'my_place',
 			'post_status' => 'publish',
 			'posts_per_page' => -1,
-		]);
+		];
+
+		if ($placetypes != false) {
+			$query_parameters['tax_query'] = [
+				[
+					'taxonomy' => 'my_placetype',
+					'field' => 'ID',
+					'terms' => $placetypes,
+				]
+			];
+		}
+
+		$places = new WP_Query($query_parameters);
 
 		if ($places->have_posts()) {
 			$data = [];
