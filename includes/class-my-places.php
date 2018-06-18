@@ -252,6 +252,16 @@ class My_Places {
 					$content .= "<p>" . get_field('address') . ", " . get_field('city') . "</p>";
 				}
 
+				// add placetype-terms this post has
+				$placetypes = [];
+				$placetype_terms = get_the_terms(get_the_ID(), 'my_placetype');
+				foreach ($placetype_terms as $term) {
+					array_push($placetypes, $term->name);
+				}
+				if (count($placetypes) > 0) {
+					$content .= "<p><i>" . implode(", ", $placetypes) . "</i></p>";
+				}
+
 				array_push($data, [
 					'latitude' => floatval(get_field('lat')),
 					'longitude' => floatval(get_field('lng')),
