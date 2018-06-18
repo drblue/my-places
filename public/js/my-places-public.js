@@ -45,6 +45,8 @@
 	}
 
 	function addMapMarkers() {
+		mymarkers = [];
+
 		// send request to WordPress and fetch available places
 		$.post(
 			my_places_obj.ajax_url,
@@ -64,9 +66,13 @@
 			if (response.data && response.data.length > 0) {
 				// loop over response.data array and add a marker for each object in the array
 				$.each(response.data, function (index, marker) {
-					addMapMarker(marker.latitude, marker.longitude, marker.content);
+					var mapmarker = addMapMarker(marker.latitude, marker.longitude, marker.content);
+
+					mymarkers.push(mapmarker);
 				});
 			}
+
+			console.log("mymarkers is", mymarkers);
 
 		})
 		.fail(function(error) {
@@ -91,7 +97,21 @@
 
 		// add first infoWindow to first marker
 		marker.addListener('click', function () {
+			closeAllInfoWindows();
 			infoWindow.open(mymap, marker);
+		});
+
+		return {
+			marker: marker,
+			infoWindow: infoWindow,
+		};
+	}
+
+	function closeAllInfoWindows() {
+		// loop over mymarkers
+		// for each mymarker, call infoWindow.close()
+		$.each(mymarkers, function(index, mymarker) {
+			mymarker.infoWindow.close();
 		});
 	}
 
