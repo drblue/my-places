@@ -1,4 +1,6 @@
-<form action="" method="POST">
+<form action="<?php echo admin_url('admin-post.php'); ?>" method="POST">
+
+	<input type="hidden" name="action" value="send_form" />
 
 	<div>
 		<label for="mp_name">Restaurant Name</label>

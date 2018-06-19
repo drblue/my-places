@@ -167,6 +167,9 @@ class My_Places {
 
 		// add ajax action for getting places
 		$this->loader->add_action( 'wp_ajax_get_places', $this, 'ajax_get_places' );
+
+		// add action for receving a form submit
+		$this->loader->add_action( 'admin_post_send_form', $this, 'parse_form_submit' );
 	}
 
 	/**
@@ -185,6 +188,9 @@ class My_Places {
 
 		// add ajax action for getting places
 		$this->loader->add_action( 'wp_ajax_nopriv_get_places', $this, 'ajax_get_places' );
+
+		// add action for receving a form submit
+		$this->loader->add_action( 'admin_post_nopriv_send_form', $this, 'parse_form_submit' );
 	}
 
 	/**
@@ -443,5 +449,20 @@ class My_Places {
 
 		// register field groups
 		require_once(plugin_dir_path(__FILE__) . 'field-groups.php');
+	}
+
+	/**
+	 * @todo move this logic to a separate class
+	 */
+	public static function parse_form_submit() {
+
+		echo "Hello from parse_form_submit()!";
+		$password = "SUPER_SECRET_NUCLEAR_PASSWORD";
+
+		$name = sanitize_text_field($_POST['mp_name']);
+		$address = sanitize_text_field($_POST['mp_address']);
+		$city = sanitize_text_field($_POST['mp_city']);
+
+		echo "You've submitted the name <b>{$name}</b>, address <b>{$address}</b> in city <b>{$city}</b>";
 	}
 }
