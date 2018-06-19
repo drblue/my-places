@@ -222,24 +222,15 @@ class My_Places {
 	 * @todo move this logic to a separate class
 	 */
 	public static function shortcode_my_places_map() {
-		$output = "";
-		$output .= '<div id="my-places-map-wrapper">';
-		$output .= '  <div id="my-placetypes">';
-		$output .= '    <ul>';
+		// start output buffering
+		ob_start();
 
-		// loop over all terms in taxonomy my_placetype and echo out a checkbox for each term
-		$placetypes = get_terms(['taxonomy' => 'my_placetype']);
-		foreach($placetypes as $placetype) {
-			$output .= '<li><input type="checkbox" id="placetype_' . $placetype->term_id . '" data-id="' . $placetype->term_id . '" checked="checked"> <label for="placetype_' . $placetype->term_id . '">' . $placetype->name . '</label></li>';
-		}
+		include(plugin_dir_path(__FILE__) . '../public/partials/my-places-public-map.php');
 
-		$output .= '    </ul>';
-		//$output .= '    <button id="my-placetypes-filter">Filter</button>';
-		$output .= '  </div>';
-		$output .= '  <div id="my-places-map"><i>Loading map...</i></div>';
-		$output .= '</>';
+		// stop output buffering and get contents
+		$content = ob_get_clean();
 
-		return $output;
+		return $content;
 	}
 
 	/**
