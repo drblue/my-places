@@ -237,7 +237,15 @@ class My_Places {
 	 * @todo move this logic to a separate class
 	 */
 	public static function shortcode_my_places_form() {
-		return "I am very friendly form! Please fill me out! Me lonely.";
+		// start output buffering
+		ob_start();
+
+		include(plugin_dir_path(__FILE__) . '../public/partials/my-places-public-form.php');
+
+		// stop output buffering and get contents
+		$content = ob_get_clean();
+
+		return $content;
 	}
 
 	/**
