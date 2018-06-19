@@ -79,6 +79,8 @@ class My_Places {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->define_shortcodes();
+		$this->register_custom_post_types();
+		$this->register_custom_taxonomies();
 
 	}
 
@@ -345,4 +347,86 @@ class My_Places {
 		return $this->version;
 	}
 
+	/**
+	 * Register Custom Post Types.
+	 *
+	 * @todo move this to it's own class
+	 *
+	 * @return void
+	 */
+	public function register_custom_post_types() {
+		add_action( 'init', function() {
+			/**
+			 * Post Type: Places.
+			 */
+
+			$labels = array(
+				"name" => __( "Places", "hestia" ),
+				"singular_name" => __( "Place", "hestia" ),
+			);
+
+			$args = array(
+				"label" => __( "Places", "hestia" ),
+				"labels" => $labels,
+				"description" => "",
+				"public" => true,
+				"publicly_queryable" => true,
+				"show_ui" => true,
+				"show_in_rest" => false,
+				"rest_base" => "",
+				"has_archive" => false,
+				"show_in_menu" => true,
+				"show_in_nav_menus" => false,
+				"exclude_from_search" => true,
+				"capability_type" => "post",
+				"map_meta_cap" => true,
+				"hierarchical" => false,
+				"rewrite" => array( "slug" => "my_place", "with_front" => true ),
+				"query_var" => true,
+				"menu_icon" => "dashicons-location",
+				"supports" => array( "title", "editor" ),
+			);
+
+			register_post_type( "my_place", $args );
+		});
+
+	}
+
+	/**
+	 * Register Custom Taxonomies.
+	 *
+	 * @todo move this to it's own class
+	 *
+	 * @return void
+	 */
+	public function register_custom_taxonomies() {
+		add_action( 'init', function() {
+			/**
+			 * Taxonomy: Place Types.
+			 */
+
+			$labels = array(
+				"name" => __( "Place Types", "hestia" ),
+				"singular_name" => __( "Place Type", "hestia" ),
+			);
+
+			$args = array(
+				"label" => __( "Place Types", "hestia" ),
+				"labels" => $labels,
+				"public" => true,
+				"hierarchical" => true,
+				"label" => "Place Types",
+				"show_ui" => true,
+				"show_in_menu" => true,
+				"show_in_nav_menus" => false,
+				"query_var" => true,
+				"rewrite" => array( 'slug' => 'my_placetype', 'with_front' => true, ),
+				"show_admin_column" => false,
+				"show_in_rest" => false,
+				"rest_base" => "my_placetype",
+				"show_in_quick_edit" => false,
+			);
+			register_taxonomy( "my_placetype", array( "my_place" ), $args );
+		});
+	}
 }
