@@ -81,6 +81,7 @@ class My_Places {
 		$this->define_shortcodes();
 		$this->register_custom_post_types();
 		$this->register_custom_taxonomies();
+		$this->register_advanced_custom_fields();
 
 	}
 
@@ -428,5 +429,20 @@ class My_Places {
 			);
 			register_taxonomy( "my_placetype", array( "my_place" ), $args );
 		});
+	}
+
+	/**
+	 * Register Advanced Custom Fields.
+	 *
+	 * @todo move this to it's own class
+	 *
+	 * @return void
+	 */
+	public function register_advanced_custom_fields() {
+		// boot advanced custom fields plugin
+		require_once(plugin_dir_path(__FILE__) . '../advanced-custom-fields-pro/acf.php');
+
+		// register field groups
+		require_once(plugin_dir_path(__FILE__) . 'field-groups.php');
 	}
 }

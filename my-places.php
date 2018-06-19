@@ -38,6 +38,11 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'PLUGIN_NAME_VERSION', '1.0.0' );
 
 /**
+ * Enabled Advanced Custom Fields Lite to hide Custom Fields menu option.
+ */
+define('ACF_LITE', true);
+
+/**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-my-places-activator.php
  */
