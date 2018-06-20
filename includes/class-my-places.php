@@ -243,10 +243,18 @@ class My_Places {
 	 * @todo move this logic to a separate class
 	 */
 	public static function shortcode_my_places_form() {
+
+		$template_filename = "my-places-form.php";
+		$template = locate_template($template_filename);
+		if (empty($template)) {
+			$template = plugin_dir_path(__FILE__) . '../templates/' . $template_filename;
+		}
+
 		// start output buffering
 		ob_start();
 
-		include(plugin_dir_path(__FILE__) . '../public/partials/my-places-public-form.php');
+		// include template
+		include($template);
 
 		// stop output buffering and get contents
 		$content = ob_get_clean();
@@ -455,6 +463,11 @@ class My_Places {
 	 * @todo move this logic to a separate class
 	 */
 	public static function parse_form_submit() {
+
+		// check that nounce exists and is valid, if not bail
+		if (!wp_verify_nonce($_REQUEST['_wpnonce'], 'my-places-form-submit')) {
+			die("Die you haxx0r!");
+		}
 
 		$data = [
 			'name' => sanitize_text_field($_POST['mp_name']),

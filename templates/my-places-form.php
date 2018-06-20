@@ -35,6 +35,9 @@
 
 	<input type="hidden" name="action" value="send_form" />
 
+	<!-- nounce -->
+	<?php wp_nonce_field('my-places-form-submit'); ?>
+
 	<div>
 		<label for="mp_name">Restaurant Name</label>
 		<input type="text" id="mp_name" name="mp_name" placeholder="Enter the restaurant's name" value="<?php echo $name; ?>" required="required" />
