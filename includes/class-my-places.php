@@ -456,13 +456,45 @@ class My_Places {
 	 */
 	public static function parse_form_submit() {
 
-		echo "Hello from parse_form_submit()!";
-		$password = "SUPER_SECRET_NUCLEAR_PASSWORD";
+		$data = [
+			'name' => sanitize_text_field($_POST['mp_name']),
+			'address' => sanitize_text_field($_POST['mp_address']),
+			'city' => sanitize_text_field($_POST['mp_city']),
+		];
 
-		$name = sanitize_text_field($_POST['mp_name']);
-		$address = sanitize_text_field($_POST['mp_address']);
-		$city = sanitize_text_field($_POST['mp_city']);
+		/**
+		 * @todo: check if all fields set, and insert into database as 'my_place' post type
+		 */
 
-		echo "You've submitted the name <b>{$name}</b>, address <b>{$address}</b> in city <b>{$city}</b>";
+		$post_id = wp_insert_post([
+			'post_title' => $data['name'],
+			'post_content' => '',
+			'post_status' => 'pending',
+			'post_type' => 'my_place',
+			'meta_input' => [
+				'address' => $data['address'],
+				'city' => $data['city'],
+			],
+		]);
+
+		if ($post_id) {
+			$query_args = [
+				'mp_form_submit_success' => true,
+			];
+		} else {
+			$query_args = [
+				'mp_form_submit_success' => false,
+				'mp_form_data' => $data,
+			];
+		}
+
+		// get refering page url
+		$url = $_SERVER['HTTP_REFERER'];
+
+		// add data and status to $url
+		$url = esc_url_raw(add_query_arg($query_args, $url));
+
+		// redirect user
+		wp_redirect($url);
 	}
 }
