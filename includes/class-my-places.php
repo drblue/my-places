@@ -82,6 +82,7 @@ class My_Places {
 		$this->register_custom_post_types();
 		$this->register_custom_taxonomies();
 		$this->register_advanced_custom_fields();
+		$this->add_cors_http_header();
 
 	}
 
@@ -114,6 +115,11 @@ class My_Places {
 		 * of the plugin.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-my-places-i18n.php';
+
+		/**
+		 * The class responsible for defining all asyncronous actions of the site.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-my-places-ajax.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
@@ -157,6 +163,7 @@ class My_Places {
 	private function define_admin_hooks() {
 
 		$plugin_admin = new My_Places_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_ajax = new My_Places_Ajax();
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -166,7 +173,8 @@ class My_Places {
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'admin_init' );
 
 		// add ajax action for getting places
-		$this->loader->add_action( 'wp_ajax_get_places', $this, 'ajax_get_places' );
+		$this->loader->add_action( 'wp_ajax_get_places', $plugin_ajax, 'get_places' );
+		$this->loader->add_action( 'wp_ajax_get_places_json', $plugin_ajax, 'get_places_json' );
 
 		// add action for receving a form submit
 		$this->loader->add_action( 'admin_post_send_form', $this, 'parse_form_submit' );
@@ -182,12 +190,14 @@ class My_Places {
 	private function define_public_hooks() {
 
 		$plugin_public = new My_Places_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_ajax = new My_Places_Ajax();
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
 		// add ajax action for getting places
-		$this->loader->add_action( 'wp_ajax_nopriv_get_places', $this, 'ajax_get_places' );
+		$this->loader->add_action( 'wp_ajax_nopriv_get_places', $plugin_ajax, 'get_places' );
+		$this->loader->add_action( 'wp_ajax_nopriv_get_places_json', $plugin_ajax, 'get_places_json' );
 
 		// add action for receving a form submit
 		$this->loader->add_action( 'admin_post_nopriv_send_form', $this, 'parse_form_submit' );
@@ -260,65 +270,6 @@ class My_Places {
 		$content = ob_get_clean();
 
 		return $content;
-	}
-
-	/**
-	 * @todo move this logic to a separate class
-	 */
-	public static function ajax_get_places() {
-		$placetypes = $_POST['placetypes'];
-
-		$query_parameters = [
-			'post_type' => 'my_place',
-			'post_status' => 'publish',
-			'posts_per_page' => -1,
-		];
-
-		if ($placetypes != false) {
-			$query_parameters['tax_query'] = [
-				[
-					'taxonomy' => 'my_placetype',
-					'field' => 'ID',
-					'terms' => $placetypes,
-				]
-			];
-		}
-
-		$places = new WP_Query($query_parameters);
-
-		if ($places->have_posts()) {
-			$data = [];
-			while ($places->have_posts()) {
-				$places->the_post();
-
-				$content = "";
-				if (get_the_title()) {
-					$content .= "<p><b>" . get_the_title() . "</b></p>";
-				}
-				if (get_field('address') && get_field('city')) {
-					$content .= "<p>" . get_field('address') . ", " . get_field('city') . "</p>";
-				}
-
-				// add placetype-terms this post has
-				$placetypes = [];
-				$placetype_terms = get_the_terms(get_the_ID(), 'my_placetype');
-				foreach ($placetype_terms as $term) {
-					array_push($placetypes, $term->name);
-				}
-				if (count($placetypes) > 0) {
-					$content .= "<p><i>" . implode(", ", $placetypes) . "</i></p>";
-				}
-
-				array_push($data, [
-					'latitude' => floatval(get_field('lat')),
-					'longitude' => floatval(get_field('lng')),
-					'content' => $content,
-				]);
-			}
-			wp_send_json_success($data);
-		} else {
-			wp_send_json_error(['message' => 'No places matching your selected criteria found.']);
-		}
 	}
 
 	/**
@@ -509,5 +460,16 @@ class My_Places {
 
 		// redirect user
 		wp_redirect($url);
+	}
+
+	/**
+	 * Add CORS HTTP Header.
+	 *
+	 * @return void
+	 */
+	public function add_cors_http_header() {
+		add_action('init', function() {
+			header("Access-Control-Allow-Origin: *");
+		});
 	}
 }
