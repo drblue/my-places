@@ -116,6 +116,7 @@ class My_Places_Ajax {
 			while ($places->have_posts()) {
 				$places->the_post();
 				$place = [
+					'id' => intval(get_the_ID()),
 					'latitude' => floatval(get_field('lat')),
 					'longitude' => floatval(get_field('lng')),
 					'name' => null,
